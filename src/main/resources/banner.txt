@@ -1,0 +1,4 @@
+
+  Web proxy
+
+  ${application.title} ${application.version} by Spring Boot ${spring-boot.version}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web Proxy</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="./webjars/fontawesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="./webjars/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="./webjars/jquery-ui/jquery-ui.min.css"/>
+<link rel="stylesheet" href="./webjars/jquery-ui/jquery-ui.theme.min.css"/>
+<style type="text/css">
+table td {
+    font-size: 87.5%;
+    color: #e83e8c;
+    word-wrap: break-word;
+    font-family: D2Coding,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+ table th {
+    font-size: 80%;
+    font-weight: 400;
+}
+</style>
+<script type="text/javascript" src="./webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="./webjars/popper.js/umd/popper.js"></script>
+<script type="text/javascript" src="./webjars/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./webjars/jquery-ui/jquery-ui.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+
+	var nodeList = document.querySelectorAll("li a");
+	for (node of nodeList) {
+		node.innerHTML = node.href;
+	}
+
+	setProperties("server.port", 				"#serverPort");
+	setProperties("server.servlet.context-path", "#serverServletContextPath");
+	setProperties("proxy.timeout.connect", 		"#proxyTimeoutConnect");
+	setProperties("proxy.timeout.read", 		"#proxyTimeoutRead");
+	setProperties("proxy.max.conn.total", 		"#proxyMaxConnTotal");
+	setProperties("proxy.max.conn.per.route", 	"#proxyMaxConnPerRoute");
+	setProperties("target.server.base.url", 	"#targetServerBaseUrl");
+	
+});
+function setProperties(key, selector) {
+	$.ajax('./properties/get/' + key).done(function(propertyValue) {
+		$(selector).html(propertyValue);
+	});
+}
+</script>
+</head>
+<body>
+
+<div class="container">
+	<h1>Web Proxy</h1>
+	<div>
+	
+		<h5>설정 : application.properties</h5>
+		<table class="table table-sm w-auto">
+			<tr>
+				<td>server.port=<span id="server.port">8080</span></td> 
+				<th>서비스 포트</th>
+			</tr>
+			<tr>
+				<td>server.servlet.context-path=<span id="serverServletContextPath">/proxy</span></td> 
+				<th>컨텍스트 패스</th>
+			</tr>
+			<tr>
+				<td>proxy.timeout.connect=<span id="proxyTimeoutConnect">30000</span></td>
+				<th>connectTimeout. 단위 ms</th>
+			</tr>
+			<tr>
+				<td>proxy.timeout.read=<span id="proxyTimeoutRead">30000</span></td>
+				<th>readTimeout. 단위 ms</th>
+			</tr>
+			<tr>
+				<td>proxy.max.conn.total=<span id="proxyMaxConnTotal">200</span></td>
+				<th>커넥션 풀 최대 개수</th>
+			</tr>
+			<tr>
+				<td>proxy.max.conn.per.route=<span id="proxyMaxConnPerRoute">100</span></td>
+				<th>라우터 당 커넥션 개수</th>
+			</tr>
+			<tr>
+				<td>target.server.base.url=<span id="targetServerBaseUrl">http://gw.handysoft.co.kr</span></td>
+				<th>타겟 서버</th>
+			</tr>
+		</table>
+
+		<h5>다음 URL 형식으로 들어온 request를 target server로 전달한다.</h5>
+		<ul>
+			<li><code>/bypass/* -> [타겟 서버]/*</code></li>
+			<li><code>/rest?urn=[url]  -> [타겟 서버][urn]</code></li>
+		</ul>
+	</div>
+
+	<h4>Test</h4>
+	<ul>
+		<li>mod
+			<br><a href="./mod/hpt/frame.page" target="testFrame"></a>
+			<br><a href="./mod?tp=/hpt/frame.page" target="testFrame"></a>
+			<br><a href="./mod?tc=http&ts=csd.handysoft.co.kr&tt=80&tp=/csdnext/" target="testFrame"></a>
+		</li>
+		<li>rest
+			<br><a href="./rest/index.jsp" target="testFrame"></a>
+			<br><a href="./rest?tp=/index.jsp" target="testFrame"></a>
+			<br><a href="./rest?tc=http&ts=csd.handysoft.co.kr&tt=80&tp=/csdnext/" target="testFrame"></a>
+		</li>
+		<li>진행중 설문
+			<br><a href="./bypass/jsp/rsch/RschDisplay.jsp?K=00bRY1la9" target="testFrame"></a>
+			<br><a href="./rest?urn=/jsp/rsch/RschDisplay.jsp?K=00bRY1la9" target="testFrame"></a>
+		</li>
+		<li>완료된 설문
+			<br><a href="./bypass/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1" target="testFrame"></a>
+			<br><a href="./rest?urn=/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1" target="testFrame"></a>
+		</li>
+	</ul>
+</div>
+
+<hr>
+
+<div class="container-lg bg-white border">
+	<iframe name="testFrame" style="width: 100%; height: 400px; border: 0;"></iframe>
+</div>
+    
+</body>
+</html>
