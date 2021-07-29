@@ -49,7 +49,8 @@ public class RestProxyServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String protocol = null, server = null, port = null, path = null;
+		String protocol = WebProxyConfig.DEFAULT_PROTOCOL, server = null, port = WebProxyConfig.DEFAULT_PORT,
+				path = null;
 
 		MultiValueMap<String, String> requestMap = new LinkedMultiValueMap<>();
 
@@ -113,7 +114,7 @@ public class RestProxyServlet extends HttpServlet {
 		log.debug("response contentType: " + contentType.toString());
 
 		String body = responseEntity.getBody();
-//		log.debug("response BODY: " + body);
+		// log.debug("response BODY: " + body);
 
 		PrintWriter writer = response.getWriter();
 		writer.append(body);

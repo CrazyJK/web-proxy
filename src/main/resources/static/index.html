@@ -19,32 +19,56 @@ table td {
     font-size: 80%;
     font-weight: 400;
 }
+a > code {
+	color:  #e83e8c;
+	font-size: 100%;
+}
 </style>
 <script type="text/javascript" src="./webjars/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="./webjars/popper.js/umd/popper.js"></script>
 <script type="text/javascript" src="./webjars/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="./webjars/jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript">
+let propertiesValues = [];
+
 $(document).ready(function() {
+
+	setProperties("server.port", 				".serverPort");
+	setProperties("server.servlet.context-path", ".serverServletContextPath");
+	setProperties("proxy.timeout.connect", 		".proxyTimeoutConnect");
+	setProperties("proxy.timeout.read", 		".proxyTimeoutRead");
+	setProperties("proxy.max.conn.total", 		".proxyMaxConnTotal");
+	setProperties("proxy.max.conn.per.route", 	".proxyMaxConnPerRoute");
+
+	setProperties("proxy.path.mod", 			".proxyPathMod");
+	setProperties("proxy.path.rest", 			".proxyPathRest");
+	setProperties("proxy.param.name.protocal", 	".proxyParamNameProtocal");
+	setProperties("proxy.param.name.server", 	".proxyParamNameServer");
+	setProperties("proxy.param.name.port", 		".proxyParamNamePort");
+	setProperties("proxy.param.name.path", 		".proxyParamNamePath");
+	setProperties("proxy.target.default", 		".proxyTargetDefault");
 
 	var nodeList = document.querySelectorAll("li a");
 	for (node of nodeList) {
-		node.innerHTML = node.href;
+		node.innerHTML = markProperties(node.href);
+		node.target = "testFrame";
 	}
 
-	setProperties("server.port", 				"#serverPort");
-	setProperties("server.servlet.context-path", "#serverServletContextPath");
-	setProperties("proxy.timeout.connect", 		"#proxyTimeoutConnect");
-	setProperties("proxy.timeout.read", 		"#proxyTimeoutRead");
-	setProperties("proxy.max.conn.total", 		"#proxyMaxConnTotal");
-	setProperties("proxy.max.conn.per.route", 	"#proxyMaxConnPerRoute");
-	setProperties("target.server.base.url", 	"#targetServerBaseUrl");
-	
 });
+
 function setProperties(key, selector) {
-	$.ajax('./properties/get/' + key).done(function(propertyValue) {
+	$.ajax('./properties/get/' + key,  {async: false}).done(function(propertyValue) {
 		$(selector).html(propertyValue);
+		propertiesValues.push(propertyValue);
 	});
+}
+
+function markProperties(text) {
+	for (var val of propertiesValues) {
+		let re = new RegExp(val, 'g');
+		text = text.replace(re, '<code>' + val + '</code>');
+	}
+	return text;
 }
 </script>
 </head>
@@ -57,61 +81,79 @@ function setProperties(key, selector) {
 		<h5>설정 : application.properties</h5>
 		<table class="table table-sm w-auto">
 			<tr>
-				<td>server.port=<span id="server.port">8080</span></td> 
+				<td>server.port=<span class="serverPort">8080</span></td> 
 				<th>서비스 포트</th>
 			</tr>
 			<tr>
-				<td>server.servlet.context-path=<span id="serverServletContextPath">/proxy</span></td> 
+				<td>server.servlet.context-path=<span class="serverServletContextPath">/proxy</span></td> 
 				<th>컨텍스트 패스</th>
 			</tr>
 			<tr>
-				<td>proxy.timeout.connect=<span id="proxyTimeoutConnect">30000</span></td>
+				<td>proxy.timeout.connect=<span class="proxyTimeoutConnect">30000</span></td>
 				<th>connectTimeout. 단위 ms</th>
 			</tr>
 			<tr>
-				<td>proxy.timeout.read=<span id="proxyTimeoutRead">30000</span></td>
+				<td>proxy.timeout.read=<span class="proxyTimeoutRead">30000</span></td>
 				<th>readTimeout. 단위 ms</th>
 			</tr>
 			<tr>
-				<td>proxy.max.conn.total=<span id="proxyMaxConnTotal">200</span></td>
+				<td>proxy.max.conn.total=<span class="proxyMaxConnTotal">200</span></td>
 				<th>커넥션 풀 최대 개수</th>
 			</tr>
 			<tr>
-				<td>proxy.max.conn.per.route=<span id="proxyMaxConnPerRoute">100</span></td>
+				<td>proxy.max.conn.per.route=<span class="proxyMaxConnPerRoute">100</span></td>
 				<th>라우터 당 커넥션 개수</th>
 			</tr>
 			<tr>
-				<td>target.server.base.url=<span id="targetServerBaseUrl">http://gw.handysoft.co.kr</span></td>
-				<th>타겟 서버</th>
+				<td>proxy.path.mod=<span class="proxyPathMod">100</span></td>
+				<th>mod proxy 방식 url</th>
+			</tr>
+			<tr>
+				<td>proxy.path.rest=<span class="proxyPathRest">100</span></td>
+				<th>restful 방식 url</th>
+			</tr>
+			<tr>
+				<td>proxy.param.name.protocal=<span class="proxyParamNameProtocal">100</span></td>
+				<th>타깃 서버 프로토콜</th>
+			</tr>
+			<tr>
+				<td>proxy.param.name.server=<span class="proxyParamNameServer">100</span></td>
+				<th>타깃 서버 도메인</th>
+			</tr>
+			<tr>
+				<td>proxy.param.name.port=<span class="proxyParamNamePort">100</span></td>
+				<th>타깃 서버 포트</th>
+			</tr>
+			<tr>
+				<td>proxy.param.name.path=<span class="proxyParamNamePath">100</span></td>
+				<th>타깃 서버 패스</th>
+			</tr>
+			<tr>
+				<td>target.server.base.url=<span class="proxyTargetDefault">http://gw.handysoft.co.kr</span></td>
+				<th>기본 타깃 서버</th>
 			</tr>
 		</table>
-
-		<h5>다음 URL 형식으로 들어온 request를 target server로 전달한다.</h5>
-		<ul>
-			<li><code>/bypass/* -> [타겟 서버]/*</code></li>
-			<li><code>/rest?urn=[url]  -> [타겟 서버][urn]</code></li>
-		</ul>
 	</div>
 
 	<h4>Test</h4>
 	<ul>
 		<li>mod
-			<br><a href="./mod/hpt/frame.page" target="testFrame"></a>
-			<br><a href="./mod?tp=/hpt/frame.page" target="testFrame"></a>
-			<br><a href="./mod?tc=http&ts=csd.handysoft.co.kr&tt=80&tp=/csdnext/" target="testFrame"></a>
+			<br><a href="./mod/hpt/frame.page"></a>
+			<br><a href="./mod?pp=/hpt/frame.page"></a>
+			<br><a href="./mod?pc=http&ps=csd.handysoft.co.kr&pt=80&pp=/csdnext/"></a>
 		</li>
 		<li>rest
-			<br><a href="./rest/index.jsp" target="testFrame"></a>
-			<br><a href="./rest?tp=/index.jsp" target="testFrame"></a>
-			<br><a href="./rest?tc=http&ts=csd.handysoft.co.kr&tt=80&tp=/csdnext/" target="testFrame"></a>
+			<br><a href="./rest/index.jsp"></a>
+			<br><a href="./rest?pp=/index.jsp"></a>
+			<br><a href="./rest?pc=http&ps=csd.handysoft.co.kr&pt=80&pp=/csdnext/"></a>
 		</li>
 		<li>진행중 설문
-			<br><a href="./bypass/jsp/rsch/RschDisplay.jsp?K=00bRY1la9" target="testFrame"></a>
-			<br><a href="./rest?urn=/jsp/rsch/RschDisplay.jsp?K=00bRY1la9" target="testFrame"></a>
+			<br><a href="./mod/jsp/rsch/RschDisplay.jsp?K=00bRY1la9"></a>
+			<br><a href="./rest?pp=/jsp/rsch/RschDisplay.jsp?K=00bRY1la9"></a>
 		</li>
 		<li>완료된 설문
-			<br><a href="./bypass/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1" target="testFrame"></a>
-			<br><a href="./rest?urn=/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1" target="testFrame"></a>
+			<br><a href="./mod/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1"></a>
+			<br><a href="./rest?pp=/jsp/rsch/PollDisplay.jsp?K=00bRY1la9&PNO=1"></a>
 		</li>
 	</ul>
 </div>

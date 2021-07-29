@@ -27,6 +27,9 @@ public class WebProxyConfig {
 
 	public static final long serialVersionUID = -7981140488413654907L;
 
+	public static final String DEFAULT_PROTOCOL = "http";
+	public static final String DEFAULT_PORT = "80";
+
 	@Value("${proxy.timeout.connect}") 		long timeoutConnect;
 	@Value("${proxy.timeout.read}")			long timeoutRead;
 	@Value("${proxy.max.conn.total}")		int maxConnTotal;

@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.hs.web.proxy.WebProxyConfig;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIUtils;
@@ -57,7 +59,8 @@ public class ModProxyServlet extends ProxyServlet {
 
 	@Override
 	protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
-		String protocol = null, server = null, port = null, path = null;
+		String protocol = WebProxyConfig.DEFAULT_PROTOCOL, server = null, port = WebProxyConfig.DEFAULT_PORT, path = null;
+
 		String queryString = "";
 		String requestQueryString = servletRequest.getQueryString();
 		if (requestQueryString != null) {
